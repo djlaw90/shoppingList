@@ -3,29 +3,45 @@
 
 
 
-
-  var shoppingList = document.querySelector('.shopping-list');
-
+var shoppingList = document.querySelector('.shopping-list');
+var form = document.getElementById("js-shopping-list-form");
+var deleteButtons = document.getElementsByClassName('shopping-item-delete');
 
 
 ///////////////
 //Shopping app
-
-var captureToDo = (e) => {
+var captureListItem = (e) => {
   e.preventDefault();
-  var toDo = document.querySelector("input").value;
+  var listInput = document.querySelector("input");
+  var listItem = document.querySelector("input").value;
 
-  if(toDo != '') {
-    addNewToDo(toDo);
+  if(listItem !== '') {
+    addNewListItem(listItem);
+    listItem = '';
+    form.reset();
+    listInput.focus();
   }
-  toDo.value = '';
 };
 
+function createDeleteButtonListeners(){
+  for(var i = 0; i < deleteButtons.length; i++) {
+    deleteButtons[i].addEventListener('click', deleteListItem);
+  }
+};
 
-//Adds to Do to DOM
-var addNewToDo = (newToDo) => {
+// Deletes list item
+function deleteListItem(e) {
+  console.log("clicked delete");
+  for (let i = 0; i < deleteButtons.length; i++) {
+      let itemToDelete = this.parentElement.parentElement;
+      console.log(itemToDelete, 'item to delete');
+      itemToDelete.remove();
+  }
+};
+
+//Adds list Item to DOM
+var addNewListItem = (newToDo) => {
   var li = document.createElement('li');
-
   //Creates HTML for new toDo
   li.innerHTML =
   `<span class="shopping-item">${newToDo}</span>
@@ -39,25 +55,15 @@ var addNewToDo = (newToDo) => {
   </div>`
 
   shoppingList.appendChild(li);
-}
-
-
-// Deletes to Do
-var deleteToDo = (event) => {
-  console.log(this);
-  var remove = event.target.parentNode.parentNode.parentNode;
-  console.log(remove);
-  var item = remove.parentNode;
-  console.log(item);
-  item.removeChild(remove);
-}
-
-
-//Loads Event listeners
-loadListeners();
+  createDeleteButtonListeners();
+};
 
 // function holds listeners
 function loadListeners() {
-  document.getElementById('js-shopping-list-form').addEventListener('submit', captureToDo);
-  document.querySelector('.shopping-item-delete').addEventListener('click', deleteToDo);
-}
+  //Takes the HTML list of deleteButtons and adds the delete event listener
+  createDeleteButtonListeners();
+  form.addEventListener('submit', captureListItem);
+};
+
+//Loads Event listeners
+loadListeners();
